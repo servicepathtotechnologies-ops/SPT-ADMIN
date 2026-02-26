@@ -66,7 +66,7 @@ function StatusPieChart({ contacts, demos }: { contacts: ContactsResponse | null
           paddingAngle={2}
           dataKey="value"
           nameKey="name"
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+          label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
         >
           {data.map((entry, index) => (
             <Cell key={entry.name} fill={CHART_COLORS[entry.name] ?? "#64748b"} />
@@ -75,7 +75,7 @@ function StatusPieChart({ contacts, demos }: { contacts: ContactsResponse | null
         <Tooltip
           contentStyle={{ backgroundColor: "#1e293b", border: "1px solid #334155", borderRadius: "8px" }}
           labelStyle={{ color: "#e2e8f0" }}
-          formatter={(value: number) => [value, "Count"]}
+          formatter={(value: number | undefined) => [value ?? 0, "Count"]}
           labelFormatter={(name) => name}
         />
         <Legend
