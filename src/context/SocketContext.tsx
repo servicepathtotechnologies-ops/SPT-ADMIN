@@ -21,11 +21,18 @@ const SocketContext = createContext<SocketContextValue | null>(null);
 
 function getSocketUrl(): string {
   if (typeof window === "undefined") return "";
-  const url = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_WS_URL || "";
-  if (url) return url;
-  const origin = window.location.origin;
-  if (origin.includes("3001")) return "http://localhost:5000";
-  return origin.replace(/:\d+$/, ":5000");
+  const envUrl = process.env.NEXT_PUBLIC_BACKEND_URL || process.env.NEXT_PUBLIC_WS_URL || "";
+  if (envUrl) return envUrl;
+
+  // Only auto-guess in local development. In production (e.g. Vercel),
+  // the Socket.IO server must be hosted separately and configured via env.
+  const { hostname, origin } = window.location;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    if (origin.includes("3001")) return "http://localhost:5000";
+    return "http://localhost:5000";
+  }
+
+  return "";
 }
 
 export function SocketProvider({ children }: { children: React.ReactNode }) {
